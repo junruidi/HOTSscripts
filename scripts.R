@@ -240,12 +240,13 @@ Rob_TPM = function(Y,L = 10, N = 10,order, p = ncol(Y)){
   result.1 = Est_PI1(Y = Y, L = L, N = N, order = order)
   eigenv = matrix(result.1$theta_hat,nrow = length(result.1$theta_hat))
   eigenl = result.1$lambda_hat
+  print("Eigen pairs number: 1")
   
   for( m in 2:p){
     result.m = Est_PIk(Y = Y,eigenv = eigenv, eigenl = eigenl, L = L, N = N, order = order)
     eigenv = cbind(eigenv, result.m$theta_hat)
     eigenl = c(eigenl, result.m$lambda_hat)
-    print(m)
+    print(paste("Eigen pairs number:",m, sep = " "))
   }
   
   eigenv = eigenv[,order(abs(eigenl),decreasing = T)]
