@@ -1,7 +1,7 @@
 rm(list = ls())
 setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
 load("Data/hr50.rda")
-source("GSVDScripts/applyall.R")
+source("HOTSscripts/scripts.R")
 library(MASS)
 Y = scale(hr50[,-1],center = T, scale = F)
 u = svd(Y)$u
@@ -16,8 +16,13 @@ normalization = function(x){return(x/sqrt(sum(x^2)))}
 pca = prcomp(Y, center = F, scale. = F)
 phi2 = pca$rotation
 sc2 = pca$x
-
 summary(pca)
+
+pca.sd = prcomp(Y, center = F, scale. = T)
+phi2.sd = pca.sd$rotation
+sc2sd = pca.sd$x
+summary(pca.sd)
+
 
 ##########################################################################
 # 2. 3rd order
@@ -286,7 +291,7 @@ for(i in 1:32){
   plot(phi2[,i],main = paste0("phi2 - ",i),type = "l",xaxt = "n",ylab = "RSV")
   axis(1, at = c(seq(1,32,2)),labels = TIME)
   abline(h = 0,lty = 3)
-  plot(phi3[,i],main = paste0("phi3 - ",i),type = "l",xaxt = "n", ylab = "RSV")
+  plot(phi2.sd[,i],main = paste0("phi3 - ",i),type = "l",xaxt = "n", ylab = "RSV")
   axis(1, at = c(seq(1,32,2)),labels = TIME)
   abline(h = 0,lty = 3)
   plot(phi4[,i],main = paste0("phi4 - ",i),type = "l",xaxt = "n", ylab = "RSV")
