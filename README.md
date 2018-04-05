@@ -1,1 +1,1 @@
-# HOTSscrpts
+# HOTSscripts
