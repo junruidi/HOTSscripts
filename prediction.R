@@ -30,3 +30,31 @@ save(result_rob_sc,file = "result_rob_sc.rda")
 result_rob_sc_ct = fwd_select(data = survival_all,ind_vars = rob_sc_ct, nboot = 1000,seed.start = 1234)
 warnings()
 save(result_rob_sc_ct,file = "result_rob_sc_ct.rda")
+
+
+
+###################################################################
+##                      Model Selection                          ##
+##                        04/05/2018                             ##
+###################################################################
+
+rm(list = ls())
+setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
+
+
+# 1. Model selection ------------------------------------------------------
+load("data/all_auc.rda")
+
+cut_to_model = function(data){
+  ind.model = which.min(diff(data$AUC)>0)
+  return(data[1:ind.model,])
+}
+
+hosvd_all_final = cut_to_model(hosvd_all)
+hosvd_all_convert_final = cut_to_model(hosvd_ct_all)
+rob_all_final = cut_to_model(rob_all)
+rob_all_convert_final = cut_to_model(rob_ct_all)
+
+save(hosvd_all_final,hosvd_all_convert_final, rob_all_final,rob_all_convert_final, file = "data/final_model.rda")
+
+rm(list = setdiff(ls(),ls(pattern = "final")))
