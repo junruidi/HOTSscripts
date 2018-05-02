@@ -9,6 +9,7 @@
 ##       useful to get U from USV'                          ##
 ##    5. robust tensor power method with                    ##
 ##       vectorization                                      ## 
+##    6. scripts for model selection                        ##
 ##############################################################
 library(rTensor)
 #1. moment/gram tensors
@@ -254,4 +255,12 @@ Rob_TPM = function(Y,L = 10, N = 10,order, p = ncol(Y)){
   
   
   result = list("eigenv" = eigenv, "eigenl" = eigenl)
+}
+
+
+# 6. scripts for model selection ------------------------------------------
+
+cut_to_model = function(data){
+  ind.model = which.min(diff(data$AUC)>0)
+  return(data[1:ind.model,])
 }

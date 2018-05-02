@@ -6,7 +6,7 @@
 
 # 1. Univariate characteristics -------------------------------------------
 rm(list = ls())
-setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
+setwd("D:/Dropbox/Junrui Di/tensor analysis/HOTS/")
 load("data/hr50.rda")
 library(qdap)
 library(lubridate)
@@ -87,7 +87,7 @@ dev.off()
 
 # 2. Plot eigen vectors ---------------------------------------------------
 rm(list = ls())
-setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
+setwd("D:/Dropbox/Junrui Di/tensor analysis/HOTS/")
 library(timeDate)
 library(qdap)
 library(lubridate)

@@ -290,6 +290,6 @@ save(hosvd_phi_convert_norm, file = "data/hosvd_eig.rda")
 # 8. Create datasets for prediction model ---------------------------------
 all = cbind(hosvd_sc,hosvd_sc_y_convert[,-c(1:32)],rob_sc[,-c(1:32)],rob_sc_y_convert[,-c(1:32)])
 load("data/cov50.rda")
-cov50 = subset(cov50, select = c(yr5_mort,wt4yr_norm))
+cov50 = subset(cov50, select = c(yr5_mort, diabetes, cancer, CHF, CHD, wt4yr_norm))
 survival_all = cbind(cov50,all)
 save(survival_all, file = "data/survivaforall.rda")
