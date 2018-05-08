@@ -17,9 +17,10 @@ training = survival_all[inx_train,]
 testing = survival_all[-inx_train,]
 
 # 1. predict 5yr mortality
-y5mort_train = ifelse(training$yr5_mort == 1, "deceased", "alive")
-y5mort_test = ifelse(testing$yr5_mort == 1, "deceased", "alive")
-ctrl_svm = trainControl(method = "repeatedcv", number = 10, repeats = 5)
+y5mort_train = ifelse(training$yr5_mort == 1, "deceased", "no")
+y5mort_test = ifelse(testing$yr5_mort == 1, "deceased", "no")
+ctrl_svm = trainControl(method = "repeatedcv", number = 10, repeats = 5, 
+                        summaryFunction=twoClassSummary,classProbs = TRUE)
 
 # 1.1 svm
 X_2ndpc_train = training[,paste0("sc2_",c(1:12))]
@@ -39,3 +40,27 @@ svm_model2_pred = predict(svm_model2,newdata = X_hosvd_test)
 confusionMatrix(y5mort_test,svm_model2_pred)
 
 
+# 1.2 svm
+X_2ndpc_train = training[,paste0("sc2_",c(1:12))]
+X_2ndpc_test = testing[,paste0("sc2_",c(1:12))]
+rf_model1 = train(x = X_2ndpc_train, y = y5mort_train, trControl = ctrl_svm,
+                   method = "rf",preProcess = c("scale"),tuneLength = 6)
+
+rf_model1_pred = as.vector(predict(rf_model1, newdata=X_2ndpc_test, type="prob")[,"deceased"])
+
+roc_rf_model1_pred = pROC::roc(y5mort_test, rf_model1_pred)
+
+varImp(object=rf_model1)
+
+
+X_hosvd_train = training[,c(paste0("sc2_",c(1:12)),paste0("hosvd_sc3_",c(1:12)),paste0("hosvd_sc4_",c(1:12)))]
+X_hosvd_test = testing[,c(paste0("sc2_",c(1:12)),paste0("hosvd_sc3_",c(1:12)),paste0("hosvd_sc4_",c(1:12)))]
+
+rf_model2 = train(x = X_hosvd_train, y = y5mort_train, trControl = ctrl_svm,
+                  method = "rf",preProcess = c("scale"),tuneLength = 6)
+
+rf_model2_pred = as.vector(predict(rf_model2, newdata=X_hosvd_test, type="prob")[,"deceased"])
+
+roc_rf_model2_pred = pROC::roc(y5mort_test, rf_model2_pred)
+
+varImp(object=rf_model2)

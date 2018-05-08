@@ -81,6 +81,35 @@ for(j in 1:25){
 rm(list = ls())
 setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
 load("data/finalmodel.rda")
+for(i in 1:25){
+  fwd.selection[[i]]$Order = c(1:nrow(fwd.selection[[i]]))
+}
+for(i in c(1,6,11,16,21)){
+  x1 = fwd.selection[[i]]
+  x2 = fwd.selection[[i+1]]
+  x3 = fwd.selection[[i+3]]
+  ori = rbind(x1,x2,x3)
+  ori = subset(ori, select = c("Variable","AUC","Outcome","Order"))
+  ori$AUC = as.character(round(ori$AUC,4))
+  ot.i = unique(ori$Outcome)
+  nm.ot.i = paste0(ot.i,"_","ori")
+  write.csv(ori, file = paste0("results/final_models/",nm.ot.i,".csv"),row.names = F)
+  
+  y1 = fwd.selection[[i]]
+  y2 = fwd.selection[[i+2]]
+  y3 = fwd.selection[[i+4]]
+  cvt = rbind(y1,y2,y3)
+  cvt = subset(cvt, select = c("Variable","AUC","Outcome","Order"))
+  cvt$AUC = as.character(round(cvt$AUC,4))
+  cvt.i = unique(cvt$Outcome)
+  nm.cvt.i = paste0(cvt.i,"_","cvt")
+  write.csv(cvt, file = paste0("results/final_models/",nm.cvt.i,".csv"),row.names = F)
+  
+  
+}
+
+
+
 
 # accumulate the data model selection
 AUC_fwd = data.frame()

@@ -293,3 +293,30 @@ load("data/cov50.rda")
 cov50 = subset(cov50, select = c(yr5_mort, diabetes, cancer, CHF, CHD, wt4yr_norm))
 survival_all = cbind(cov50,all)
 save(survival_all, file = "data/survivaforall.rda")
+
+rm(list = ls())
+load("data/survivaforall.rda")
+load("data/cov50.rda")
+
+idwave = subset(cov50, select = c("ID","yr"))
+names(idwave)[2] = "wave"
+idwave$wave = ifelse(idwave$wave == 34, 1, 2)
+
+survival_all = cbind(idwave,survival_all)
+
+yr5_mort = factor(ifelse(survival_all$yr5_mort == 1, "Deceased","Alive"), levels = c("Alive","Deceased"))
+diabetes = factor(ifelse(survival_all$diabetes == 1, "Yes","No"), levels = c("No","Yes"))
+cancer = factor(ifelse(survival_all$cancer == 1, "Yes","No"), levels = c("No","Yes"))
+chf = factor(ifelse(survival_all$CHF == 1, "Yes","No"), levels = c("No","Yes"))
+chd = factor(ifelse(survival_all$CHD == 1, "Yes","No"), levels = c("No","Yes"))
+
+
+survival_all$yr5_mort = yr5_mort
+survival_all$diabetes = diabetes
+survival_all$cancer = cancer
+survival_all$CHF = chf
+survival_all$CHD = chd
+survival_all$wt4yr_norm = NULL
+survival_all$age = cov50$age
+
+save(survival_all, file = "data/survivaforall.rda")
