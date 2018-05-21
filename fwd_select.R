@@ -7,7 +7,7 @@ fwd_select = function(data, ind_vars, outcome, nboot, seed.start){
                              "EPIC" = rep(NA_real_,length(ind_vars)),
                              stringsAsFactors = FALSE)
   N = nrow(data)
-  dat_boot = data[,c(outcome,"wt4yr_norm",ind_vars)]
+  dat_boot = data[,c(outcome,"NormWts",ind_vars)]
   for(i in 1:length(ind_vars)){
     exc_vars = setdiff(ind_vars, inc_vars)
     ret    = cbind.data.frame(exc_vars, NA_real_, NA_real_, NA_real_,stringsAsFactors=FALSE)
@@ -16,8 +16,8 @@ fwd_select = function(data, ind_vars, outcome, nboot, seed.start){
       set.seed(j + seed.start)
       
       ## use same bootstrapped data set for each iteration of the forward selection procedure
-      inx      = sample(1:N, replace=TRUE, size=N, prob=dat_boot$wt4yr_norm)
-      inx_pred = sample(1:N, replace=TRUE, size=N, prob=dat_boot$wt4yr_norm)
+      inx      = sample(1:N, replace=TRUE, size=N, prob=dat_boot$NormWts)
+      inx_pred = sample(1:N, replace=TRUE, size=N, prob=dat_boot$NormWts)
       
       dat_tmp = dat_boot[inx,]
       dat_tmp_pred = dat_boot[inx_pred,]

@@ -1,5 +1,5 @@
 library(pROC)
-library(nhanesdata)
+
 bootstrap_tt_fwd_select = function(data, ind_vars, outcome, nboot, seed.start){
   inc_vars = c()
   auc_mat_full = data.frame("Variable" = rep(NA_character_,length(ind_vars)),
@@ -14,7 +14,7 @@ bootstrap_tt_fwd_select = function(data, ind_vars, outcome, nboot, seed.start){
   dat_boot_case = reweight_accel(split.data[[2]])
   N_control = nrow(dat_boot_control)
   N_case = nrow(dat_boot_case)
-  if(N_control <= N_case){
+  if(N_contro00l <= N_case){
     print("need to check the categorization")
   }
   

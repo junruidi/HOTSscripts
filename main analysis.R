@@ -3,7 +3,7 @@
 ##                        04/05/2018                             ##
 ###################################################################
 rm(list = ls())
-setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
+setwd("D:/Dropbox/Junrui Di/tensor analysis/HOTS/")
 load("Data/hr50.rda")
 source("HOTSscripts/scripts.R")
 library(MASS)
@@ -50,7 +50,6 @@ for(i in seq(0.1,0.9,0.1)){
   rank_ev3_v = rbind(rank_ev3_v,row.i)
 }
 names(rank_ev3_v) = c("rank","lambda")
-
 # rank lambda
 # 1    2    0.1
 # 2    4    0.2
@@ -58,9 +57,10 @@ names(rank_ev3_v) = c("rank","lambda")
 # 4    8    0.4
 # 5   11    0.5
 # 6   14    0.6
-# 7   17    0.7
+# 7   18    0.7
 # 8   22    0.8
 # 9   26    0.9
+
 
 # convert back to gain interpretability
 convert_phi3 = ginv(t(w)) %*% phi3
@@ -85,6 +85,7 @@ for(i in seq(0.1,0.9,0.1)){
   rank_ev3_rob = rbind(rank_ev3_rob,row.i)
 }
 names(rank_ev3_rob) = c("rank","lambda")
+
 # rank lambda
 # 1    2    0.1
 # 2    4    0.2
@@ -92,9 +93,10 @@ names(rank_ev3_rob) = c("rank","lambda")
 # 4    8    0.4
 # 5   11    0.5
 # 6   14    0.6
-# 7   18    0.7
+# 7   18   0.7
 # 8   22    0.8
 # 9   27    0.9
+
 
 # convert back to gain interpretability
 convert_phi3_rob = ginv(t(w)) %*% phi3_rob
@@ -133,8 +135,9 @@ names(rank_ev4_v) = c("rank","lambda")
 # 5    8    0.5
 # 6   11    0.6
 # 7   15    0.7
-# 8   19    0.8
+# 8   20    0.8
 # 9   25    0.9
+
 
 
 # convert back to gain interpretability
@@ -162,11 +165,11 @@ names(rank_ev4_rob) = c("rank","lambda")
 # rank lambda
 # 1    1    0.1
 # 2    2    0.2
-# 3    3    0.3
+# 3    4    0.3
 # 4    6    0.4
 # 5    8    0.5
 # 6   11    0.6
-# 7   14    0.7
+# 7   15    0.7
 # 8   19    0.8
 # 9   25    0.9
 
@@ -217,106 +220,84 @@ rob_sc_y_convert = as.data.frame(cbind(sc2,convert_sc3_rob, convert_sc4_rob))
 names(rob_sc_y_convert) = paste0("rob_sc_y_convert",rep(c(2,3,4),each = 32),"_",rep(c(1:32),3))
 names(rob_sc_y_convert)[1:32] = paste0("sc2","_",c(1:32))
 
-# 6. Exploration on scores correlations -----------------------------------
-
-pdf(file = "results/exploration/hosvd_sc.pdf", width = 28, height = 28)
-par(mar = c(4,5,9,6))
-par(oma = c(1,0,1,0))
-corrplot::corrplot(cor(hosvd_sc[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
-dev.off()
-pdf(file = "results/exploration/hosvd_sc_convert.pdf", width = 28, height = 28)
-par(mar = c(4,5,9,6))
-par(oma = c(1,0,1,0))
-corrplot::corrplot(cor(hosvd_sc_y_convert[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
-dev.off()
-pdf(file = "results/exploration/rob_sc.pdf", width = 28, height = 28)
-par(mar = c(4,5,9,6))
-par(oma = c(1,0,1,0))
-corrplot::corrplot(cor(rob_sc[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
-dev.off()
-pdf(file = "results/exploration/rob_sc_convert.pdf", width = 28, height = 28)
-par(mar = c(4,5,9,6))
-par(oma = c(1,0,1,0))
-corrplot::corrplot(cor(rob_sc_y_convert[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
-dev.off()
-
-
-
-# 7. Explore eigen vectors ------------------------------------------------
-library(qdap)
-library(timeDate)
-library(lubridate)
-TIME = char2end(as.character(timeSequence(from = hm("7:00"), to = hm("22:59"), by = "hour")),char = " ",noc=1)
-TIME = beg2char(TIME,":",2)
-
-pdf("results/exploration/phi.pdf",width = 10,height = 10)
-par(mfrow = c(3,1))
-for(i in 1:32){
-  plot(phi2[,i],main = paste0("phi2 - ",i),type = "l",xaxt = "n",ylab = "RSV")
-  axis(1, at = c(seq(1,32,2)))
-  abline(h = 0,lty = 3)
-  plot(phi3[,i],main = paste0("phi3 - ",i),type = "l",xaxt = "n", ylab = "RSV")
-  lines(phi3_rob[,i], col = "red")
-  axis(1, at = c(seq(1,32,2)))
-  abline(h = 0,lty = 3)
-  plot(phi4[,i],main = paste0("phi4 - ",i),type = "l",xaxt = "n", ylab = "RSV")
-  lines(phi4_rob[,i], col = "red")
-  axis(1, at = c(seq(1,32,2)))
-  abline(h = 0,lty = 3)
-}
-dev.off()
-
-pdf("results/exploration/phi_convert_norm.pdf",width = 10,height = 10)
-par(mfrow = c(3,1))
-for(i in 1:32){
-  plot(phi2[,i],main = paste0("phi2 - ",i),type = "l",xaxt = "n",ylab = "RSV")
-  axis(1, at = c(seq(1,32,2)),labels = TIME)
-  abline(h = 0,lty = 3)
-  plot(convert_phi3_norm[,i],main = paste0("phi3 - ",i),type = "l",xaxt = "n", ylab = "RSV")
-  lines(convert_phi3_rob_norm[,i], col = "red")
-  axis(1, at = c(seq(1,32,2)),labels = TIME)
-  abline(h = 0,lty = 3)
-  plot(convert_phi4_norm[,i],main = paste0("phi4 - ",i),type = "l",xaxt = "n", ylab = "RSV")
-  lines(convert_phi4_rob_norm[,i], col = "red")
-  axis(1, at = c(seq(1,32,2)),labels = TIME)
-  abline(h = 0,lty = 3)
-}
-dev.off()
-
+# # 6. Exploration on scores correlations -----------------------------------
+# 
+# pdf(file = "results/exploration/hosvd_sc.pdf", width = 28, height = 28)
+# par(mar = c(4,5,9,6))
+# par(oma = c(1,0,1,0))
+# corrplot::corrplot(cor(hosvd_sc[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
+# dev.off()
+# pdf(file = "results/exploration/hosvd_sc_convert.pdf", width = 28, height = 28)
+# par(mar = c(4,5,9,6))
+# par(oma = c(1,0,1,0))
+# corrplot::corrplot(cor(hosvd_sc_y_convert[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
+# dev.off()
+# pdf(file = "results/exploration/rob_sc.pdf", width = 28, height = 28)
+# par(mar = c(4,5,9,6))
+# par(oma = c(1,0,1,0))
+# corrplot::corrplot(cor(rob_sc[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
+# dev.off()
+# pdf(file = "results/exploration/rob_sc_convert.pdf", width = 28, height = 28)
+# par(mar = c(4,5,9,6))
+# par(oma = c(1,0,1,0))
+# corrplot::corrplot(cor(rob_sc_y_convert[,c(1:96)]),cl.pos = "b",cl.cex = 2,tl.cex = 1.6,cl.align.text = "r",na.label = "-")
+# dev.off()
+# 
+# 
+# 
+# # 7. Explore eigen vectors ------------------------------------------------
+# library(qdap)
+# library(timeDate)
+# library(lubridate)
+# TIME = char2end(as.character(timeSequence(from = hm("7:00"), to = hm("22:59"), by = "hour")),char = " ",noc=1)
+# TIME = beg2char(TIME,":",2)
+# 
+# pdf("results/exploration/phi.pdf",width = 10,height = 10)
+# par(mfrow = c(3,1))
+# for(i in 1:32){
+#   plot(phi2[,i],main = paste0("phi2 - ",i),type = "l",xaxt = "n",ylab = "RSV")
+#   axis(1, at = c(seq(1,32,2)))
+#   abline(h = 0,lty = 3)
+#   plot(phi3[,i],main = paste0("phi3 - ",i),type = "l",xaxt = "n", ylab = "RSV")
+#   lines(phi3_rob[,i], col = "red")
+#   axis(1, at = c(seq(1,32,2)))
+#   abline(h = 0,lty = 3)
+#   plot(phi4[,i],main = paste0("phi4 - ",i),type = "l",xaxt = "n", ylab = "RSV")
+#   lines(phi4_rob[,i], col = "red")
+#   axis(1, at = c(seq(1,32,2)))
+#   abline(h = 0,lty = 3)
+# }
+# dev.off()
+# 
+# pdf("results/exploration/phi_convert_norm.pdf",width = 10,height = 10)
+# par(mfrow = c(3,1))
+# for(i in 1:32){
+#   plot(phi2[,i],main = paste0("phi2 - ",i),type = "l",xaxt = "n",ylab = "RSV")
+#   axis(1, at = c(seq(1,32,2)),labels = TIME)
+#   abline(h = 0,lty = 3)
+#   plot(convert_phi3_norm[,i],main = paste0("phi3 - ",i),type = "l",xaxt = "n", ylab = "RSV")
+#   lines(convert_phi3_rob_norm[,i], col = "red")
+#   axis(1, at = c(seq(1,32,2)),labels = TIME)
+#   abline(h = 0,lty = 3)
+#   plot(convert_phi4_norm[,i],main = paste0("phi4 - ",i),type = "l",xaxt = "n", ylab = "RSV")
+#   lines(convert_phi4_rob_norm[,i], col = "red")
+#   axis(1, at = c(seq(1,32,2)),labels = TIME)
+#   abline(h = 0,lty = 3)
+# }
+# dev.off()
+# 
 save(rob_phi_convert_norm, file = "data/rtpm_eig.rda")
 save(hosvd_phi_convert_norm, file = "data/hosvd_eig.rda")
 
 
 # 8. Create datasets for prediction model ---------------------------------
 all = cbind(hosvd_sc,hosvd_sc_y_convert[,-c(1:32)],rob_sc[,-c(1:32)],rob_sc_y_convert[,-c(1:32)])
+
+# load("data/survivaforall.rda")
+# all = survival_all[,c(8:295)]
 load("data/cov50.rda")
-cov50 = subset(cov50, select = c(yr5_mort, diabetes, cancer, CHF, CHD, wt4yr_norm))
+cov50 = subset(cov50, select = c(yr5_mort, Diabetes, Cancer, CHF, CHD, wave, SDMVPSU, SDMVSTRA,NormWts))
 survival_all = cbind(cov50,all)
-save(survival_all, file = "data/survivaforall.rda")
 
-rm(list = ls())
-load("data/survivaforall.rda")
-load("data/cov50.rda")
-
-idwave = subset(cov50, select = c("ID","yr"))
-names(idwave)[2] = "wave"
-idwave$wave = ifelse(idwave$wave == 34, 1, 2)
-
-survival_all = cbind(idwave,survival_all)
-
-yr5_mort = factor(ifelse(survival_all$yr5_mort == 1, "Deceased","Alive"), levels = c("Alive","Deceased"))
-diabetes = factor(ifelse(survival_all$diabetes == 1, "Yes","No"), levels = c("No","Yes"))
-cancer = factor(ifelse(survival_all$cancer == 1, "Yes","No"), levels = c("No","Yes"))
-chf = factor(ifelse(survival_all$CHF == 1, "Yes","No"), levels = c("No","Yes"))
-chd = factor(ifelse(survival_all$CHD == 1, "Yes","No"), levels = c("No","Yes"))
-
-
-survival_all$yr5_mort = yr5_mort
-survival_all$diabetes = diabetes
-survival_all$cancer = cancer
-survival_all$CHF = chf
-survival_all$CHD = chd
-survival_all$wt4yr_norm = NULL
-survival_all$age = cov50$age
 
 save(survival_all, file = "data/survivaforall.rda")

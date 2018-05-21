@@ -30,6 +30,8 @@ std2y = apply(scale(hr50[,-1],center = T, scale = T), 2, var)
 skwY = apply(Y,2,skewness)
 kurY = apply(Y,2,kurtosis) + 3
 
+
+#tiff(file = "results/manuscript/univariate.tiff", units = "in",width = 11 ,height = 14,res = 300,compression = "lzw")
 png(file = "results/manuscript/univariate.png", units = "in",width = 11 ,height = 14,res = 300)
 par(mfrow = c(3,1))
 par(mar=c(5,5,4,5))
@@ -97,8 +99,10 @@ load("data/hosvd_eig.rda")
 load("data/rtpm_eig.rda")
 
 # 2.1 HOSVD top4
+# tiff(file = "results/manuscript/hosvd_eigen_4.tiff", 
+    units = "in",width = 15 ,height = 13,res = 300,compression = "lzw")
 png(file = "results/manuscript/hosvd_eigen_4.png", 
-    units = "in",width = 15 ,height = 13,res = 300)
+     units = "in",width = 15 ,height = 13,res = 300)
 par(oma = c(4, 1, 1, 1))
 par(mfrow = c(2,2))
 for(i in 1:4){
@@ -106,19 +110,19 @@ for(i in 1:4){
   
   if(i == 1){
     pc.i[,1] = -pc.i[,1]
+    pc.i[,2] = -pc.i[,2]
     pc.i[,3] = -pc.i[,3]
   }
 
-  if(i == 2){
-    pc.i[,3] = -pc.i[,3]
-  }
   
   if(i == 3){
     pc.i[,1] = -pc.i[,1]
+    pc.i[,3] = -pc.i[,3]
   }
   
   if(i == 4){
     pc.i[,1] = -pc.i[,1]
+    pc.i[,3] = -pc.i[,3]
   }
   
   
@@ -151,7 +155,6 @@ for(i in 1:12){
   
   if(i == 1){
     pc.i[,1] = -pc.i[,1]
-    pc.i[,3] = -pc.i[,3]
   }
   
   if(i == 2){
@@ -181,15 +184,17 @@ for(i in 1:12){
 }
 par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-legend("bottom", c(expression(Phi^(2)),expression(Phi^(3)),expression(Phi^(4))), 
+legend("bottom", c(expression(Phi^(2)),expression(tilde(Phi)^(3)),expression(tilde(Phi)^(4))), 
        xpd = TRUE, col = c("black","red","blue"), cex = 2,
        horiz = TRUE, inset = c(0,0), bty = "n", lwd = 2, lty = 1)
 dev.off()
 
 
 # 2.2 RTPM top4
+# tiff(file = "results/manuscript/rtpm_eigen_4.tiff", 
+    units = "in",width = 15 ,height = 13,res = 300,compression = "lzw")
 png(file = "results/manuscript/rtpm_eigen_4.png", 
-    units = "in",width = 15 ,height = 13,res = 300)
+     units = "in",width = 15 ,height = 13,res = 300)
 par(oma = c(4, 1, 1, 1))
 par(mfrow = c(2,2))
 for(i in 1:4){
@@ -197,16 +202,17 @@ for(i in 1:4){
   
   if(i == 1){
     pc.i[,1] = -pc.i[,1]
+    pc.i[,3] = -pc.i[,3]
   }
 
 
   if(i == 3){
     pc.i[,1] = -pc.i[,1]
-    pc.i[,2] = -pc.i[,2]
   }
 
   if(i == 4){
     pc.i[,1] = -pc.i[,1]
+    pc.i[,3] = -pc.i[,3]
   }
   
   
@@ -239,6 +245,10 @@ for(i in 1:12){
   
   if(i == 1){
     pc.i[,1] = -pc.i[,1]
+    pc.i[,3] = -pc.i[,3]
+  }
+  if(i == 2){
+    pc.i[,3] = -pc.i[,3]
   }
   
   
@@ -249,6 +259,7 @@ for(i in 1:12){
   
   if(i == 4){
     pc.i[,1] = -pc.i[,1]
+    pc.i[,3] = -pc.i[,3]
   }
   
   min.i = min(c(pc.i))
@@ -265,7 +276,51 @@ for(i in 1:12){
 }
 par(fig = c(0, 1, 0, 1), oma = c(0, 0, 0, 0), mar = c(0, 0, 0, 0), new = TRUE)
 plot(0, 0, type = "n", bty = "n", xaxt = "n", yaxt = "n")
-legend("bottom", c(expression(Phi^(2)),expression(Phi^(3)),expression(Phi^(4))), 
+legend("bottom", c(expression(Phi^(2)),expression(tilde(Phi)^(3)),expression(tilde(Phi)^(4))), 
        xpd = TRUE, col = c("black","red","blue"), cex = 2,
        horiz = TRUE, inset = c(0,0), bty = "n", lwd = 2, lty = 1)
 dev.off()
+
+
+
+# 3. Prediction Models Comparison -----------------------------------------
+rm(list = ls())
+setwd("D:/Dropbox/Junrui Di/tensor analysis/HOTS/")
+load("data/finalmodel0518.rda")
+
+
+# tiff(file = "results/manuscript/model_selection.tiff",width = 7,height = 10,units = "in",res = 300,
+#      compression = "lzw")
+png(file = "results/manuscript/model_selection.png",width = 7,height = 10,units = "in",res = 300)
+par(mfrow = c(3,1))
+for(i in c(1,4,7)){
+  if(i == 1){
+    main.i = "5-Year Mortality"
+  }
+  if(i == 4){
+    main.i = "Diabetes"
+  }
+  if(i == 7){
+    main.i = "Cancer"
+  }
+  
+  x1 = fwd.selection[[i]]$AUC
+  x2 = fwd.selection[[i+1]]$AUC
+  x3 = fwd.selection[[i+2]]$AUC
+  
+  lowlim = floor(min(c(x1,x2,x3)) / 0.005) * 0.005
+  uplim = ceiling(max(c(x1,x2,x3)) / 0.005) * 0.005
+  
+  plot(x1,xlim = c(1,max(length(x1),length(x2),length(x3))),ylim = c(lowlim,uplim),type="b",pch=NA,xaxt = "n",
+       ylab = "AUC", xlab = "Number of Predictors", main =main.i, cex.main = 1.8, cex.lab = 1.5)
+  axis(1, at = c(1:max(length(x1),length(x2),length(x3))), cex = 1.5)
+  text(c(1:length(x1)), x1,labels=c("Model1"),cex=0.9,col="black")
+  lines(x2, type = "b",col = "red", pch = NA)
+  text(c(1:length(x2)), x2,labels=c("Model2"),cex=0.9,col="red")
+  lines(x3, type = "b", col = "blue", pch = NA)
+  text(c(1:length(x3)), x3,labels=c("Model3"),cex=0.9,col="blue")
+}
+
+
+dev.off()
+

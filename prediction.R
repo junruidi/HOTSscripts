@@ -4,32 +4,18 @@
 ###################################################################
 
 rm(list = ls())
-setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
+setwd("D:/Dropbox/Junrui Di/tensor analysis/HOTS/")
 load("data/survivaforall.rda")
 source("HOTSscripts/fwd_select.R")
 
-
-hosvd_sc = c(paste0("sc2_",c(1:12)),paste0("hosvd_sc3_",c(1:12)),paste0("hosvd_sc4_",c(1:12)))
-hosvd_sc_ct = c(paste0("sc2_",c(1:12)),paste0("hosvd_sc_y_convert3_",c(1:12)),paste0("hosvd_sc_y_convert4_",c(1:12)))
-rob_sc = c(paste0("sc2_",c(1:12)),paste0("rob_sc3_",c(1:12)),paste0("rob_sc4_",c(1:12)))
-rob_sc_ct = c(paste0("sc2_",c(1:12)),paste0("rob_sc_y_convert3_",c(1:12)),paste0("rob_sc_y_convert4_",c(1:12)))
+pred = paste0("sc2_",c(1:12))
+pred = c(paste0("sc2_",c(1:12)),paste0("hosvd_sc3_",c(1:12)),paste0("hosvd_sc4_",c(1:12)))
+pred = c(paste0("sc2_",c(1:12)),paste0("rob_sc3_",c(1:12)),paste0("rob_sc4_",c(1:12)))
 
 
-result_hosvd_sc = fwd_select(data = survival_all,ind_vars = hosvd_sc, nboot = 1000,seed.start = 1234,outcome = "CHD")
+result = fwd_select(data = survival_all,ind_vars = hosvd_sc, outcome = "y5r-mort",nboot = 1000,seed.start = 1234,outcome = "CHD")
 warnings()
-save(result_hosvd_sc,file = "result_hosvd_sc.rda")
 
-result_hosvd_sc_ct = fwd_select(data = survival_all,ind_vars = hosvd_sc_ct, nboot = 1000,seed.start = 1234)
-warnings()
-save(result_hosvd_sc_ct,file = "result_hosvd_sc_ct.rda")
-
-result_rob_sc = fwd_select(data = survival_all,ind_vars = rob_sc, nboot = 1000,seed.start = 1234)
-warnings()
-save(result_rob_sc,file = "result_rob_sc.rda")
-
-result_rob_sc_ct = fwd_select(data = survival_all,ind_vars = rob_sc_ct, nboot = 1000,seed.start = 1234)
-warnings()
-save(result_rob_sc_ct,file = "result_rob_sc_ct.rda")
 
 
 
@@ -80,14 +66,14 @@ for(j in 1:25){
 ############
 rm(list = ls())
 setwd("~/Dropbox/Junrui Di/tensor analysis/HOTS/")
-load("data/finalmodel.rda")
-for(i in 1:25){
+load("data/finalmodel0518.rda")
+for(i in 1:9){
   fwd.selection[[i]]$Order = c(1:nrow(fwd.selection[[i]]))
 }
-for(i in c(1,6,11,16,21)){
+for(i in c(1,4,7)){
   x1 = fwd.selection[[i]]
   x2 = fwd.selection[[i+1]]
-  x3 = fwd.selection[[i+3]]
+  x3 = fwd.selection[[i+2]]
   ori = rbind(x1,x2,x3)
   ori = subset(ori, select = c("Variable","AUC","Outcome","Order"))
   ori$AUC = as.character(round(ori$AUC,4))
@@ -95,21 +81,7 @@ for(i in c(1,6,11,16,21)){
   nm.ot.i = paste0(ot.i,"_","ori")
   write.csv(ori, file = paste0("results/final_models/",nm.ot.i,".csv"),row.names = F)
   
-  y1 = fwd.selection[[i]]
-  y2 = fwd.selection[[i+2]]
-  y3 = fwd.selection[[i+4]]
-  cvt = rbind(y1,y2,y3)
-  cvt = subset(cvt, select = c("Variable","AUC","Outcome","Order"))
-  cvt$AUC = as.character(round(cvt$AUC,4))
-  cvt.i = unique(cvt$Outcome)
-  nm.cvt.i = paste0(cvt.i,"_","cvt")
-  write.csv(cvt, file = paste0("results/final_models/",nm.cvt.i,".csv"),row.names = F)
-  
-  
 }
-
-
-
 
 # accumulate the data model selection
 AUC_fwd = data.frame()
@@ -119,45 +91,3 @@ for(i in 1:25){
   AUC_fwd = rbind(AUC_fwd,x)
 }
 ref = data.frame(var = unique(na.omit(AUC_fwd$Outcome)), labels = c("5yr Mortality","Diabetes","Cancer","CHF","CHD"))
-
-pdf(file = "results/exploration/model_selection_visulization.pdf",width = 16,height = 20)
-par(mfrow = c(5,2))
-for(i in c(1,6,11,16,21)){
-  outcome.i = unique(fwd.selection[[i]]$Outcome)
-  main.i = as.character(ref$labels[which(ref$var == outcome.i)])
-  
-  x1 = fwd.selection[[i]]$AUC
-  x2 = fwd.selection[[i+1]]$AUC
-  x3 = fwd.selection[[i+3]]$AUC
-  
-  lowlim = floor(min(c(x1,x2,x3)) / 0.005) * 0.005
-  uplim = ceiling(max(c(x1,x2,x3)) / 0.005) * 0.005
-  
-  plot(x1,xlim = c(1,max(length(x1),length(x2),length(x3))),ylim = c(lowlim,uplim),type="b",pch=NA,xaxt = "n",
-       ylab = "AUC", xlab = "Number of PCs", main = paste(main.i,"Oringal Scores", sep = ": "))
-  axis(1, at = c(1:max(length(x1),length(x2),length(x3))))
-  text(c(1:length(x1)), x1,labels=c("Model1"),cex=0.75,col="black")
-  lines(x2, type = "b",col = "red", pch = NA)
-  text(c(1:length(x2)), x2,labels=c("Model2"),cex=0.75,col="red")
-  lines(x3, type = "b", col = "blue", pch = NA)
-  text(c(1:length(x3)), x3,labels=c("Model3"),cex=0.75,col="blue")
-  
-  
-  x1 = fwd.selection[[i]]$AUC
-  x2 = fwd.selection[[i+2]]$AUC
-  x3 = fwd.selection[[i+4]]$AUC
-  
-  lowlim = floor(min(c(x1,x2,x3)) / 0.005) * 0.005
-  uplim = ceiling(max(c(x1,x2,x3)) / 0.005) * 0.005
-  
-  plot(x1,xlim = c(1,max(length(x1),length(x2),length(x3))),ylim = c(lowlim,uplim),type="b",pch=NA,xaxt = "n",
-       ylab = "AUC", xlab = "Number of PCs", main = paste(main.i,"Converted Scores", sep = ": "))
-  axis(1, at = c(1:max(length(x1),length(x2),length(x3))))
-  text(c(1:length(x1)), x1,labels=c("Model1"),cex=0.75,col="black")
-  lines(x2, type = "b",col = "red", pch = NA)
-  text(c(1:length(x2)), x2,labels=c("Model2"),cex=0.75,col="red")
-  lines(x3, type = "b", col = "blue", pch = NA)
-  text(c(1:length(x3)), x3,labels=c("Model3"),cex=0.75,col="blue")
-  
-}
-dev.off()
