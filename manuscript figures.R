@@ -324,3 +324,18 @@ for(i in c(1,4,7)){
 
 dev.off()
 
+
+# 4. Age and scores -------------------------------------------------------
+
+rm(list = ls())
+setwd("D:/Dropbox/Junrui Di/tensor analysis/HOTS/")
+load("data/survivaforall.rda")
+load("data/cov50.rda")
+
+scores2 = data.frame(age = cov50$Age, survival_all[,10:13])
+scores3_hosvd = data.frame(age = cov50$Age, survival_all[,42:45])
+scores4_hosvd = data.frame(age = cov50$Age, survival_all[,74:77])
+scores3_rptm = data.frame(age = cov50$Age, survival_all[,170:173])
+scores4_rptm = data.frame(age = cov50$Age, survival_all[,202:205])
+
+plot(scores3_hosvd$age,scores3_hosvd$hosvd_sc3_3)
